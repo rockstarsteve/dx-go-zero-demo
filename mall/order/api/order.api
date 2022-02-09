@@ -1,0 +1,29 @@
+type (
+	OrderReq {
+		Id string `path:"id"`
+	}
+
+	OrderReply {
+		Id   string `json:"id"`
+		Name string `json:"name"`
+	}
+)
+
+@server(
+	jwt: Auth
+	group: order
+	middleware: AuthMiddleware
+)
+service order {
+	@handler getOrder
+	get /api/order/get/:id (OrderReq) returns (OrderReq)
+}
+
+//@server(
+//	jwt: Auth
+//	group: order
+//)
+//service order {
+//	@handler buy
+//	get /api/buy/id/:userId (OrderReq) returns (OrderReq)
+//}
