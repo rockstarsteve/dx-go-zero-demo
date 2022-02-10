@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 	"go-zero-demo/mall/sys/rpc/dicclient"
-
 	"go-zero-demo/mall/user/rpc/internal/svc"
 	user "go-zero-demo/mall/user/rpc/user"
 
@@ -31,15 +30,15 @@ func (l *GetUserLogic) GetUser(in *user.IdRequest) (*user.UserResponse, error) {
 	dic, err := l.svcCtx.DicRpc.GetDicById(l.ctx, &dicclient.IdRequest{
 		Id: genderId,
 	})
-
-	if err != nil {
+	sysUser, err2 := l.svcCtx.Model.FindOne(genderId)
+	if err2 != nil || err != nil {
 		return nil, err
 	}
 
 	return &user.UserResponse{
-		Id:   "user rpc处理的id"+ in.Id,
-		Name: "user rpc 查询到的名称",
+		Id: string(sysUser.Id),
+		Name:   sysUser.Name,
 		Gender: dic.Val + " ->这个是从字典rpc表中查询到的数据",
-		Age: 12,
+		Age:    12,
 	}, nil
 }
