@@ -13,6 +13,8 @@ message UserResponse {
   string name = 2;
   // 用户性别
   string gender = 3;
+  // 用户年龄
+  int64 age = 5;
 }
 
 service User {

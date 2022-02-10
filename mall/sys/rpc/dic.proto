@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package dic;
+
+message IdRequest {
+  int64 id = 1;
+}
+
+message DicResponse {
+  // 用户id
+  int64 id = 1;
+  // 用户名称
+  string key = 2;
+  // 用户性别
+  string val = 3;
+}
+
+service Dic {
+  rpc getDicById(IdRequest) returns(DicResponse);
+}

@@ -4,26 +4,18 @@ type (
 	}
 
 	OrderReply {
-		Id   string `json:"id"`
-		Name string `json:"name"`
+		Id     string `json:"id"`
+		Name   string `json:"name"`
+		Age    int64  `json:"age"`
+		Gender string `json:"gender"`
 	}
 )
 
 @server(
-	jwt: Auth
 	group: order
 	middleware: AuthMiddleware
 )
 service order {
 	@handler getOrder
-	get /api/order/get/:id (OrderReq) returns (OrderReq)
+	get /api/order/get/:id (OrderReq) returns (OrderReply)
 }
-
-//@server(
-//	jwt: Auth
-//	group: order
-//)
-//service order {
-//	@handler buy
-//	get /api/buy/id/:userId (OrderReq) returns (OrderReq)
-//}

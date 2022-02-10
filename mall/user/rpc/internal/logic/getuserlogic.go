@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"go-zero-demo/mall/sys/rpc/dicclient"
 
 	"go-zero-demo/mall/user/rpc/internal/svc"
 	user "go-zero-demo/mall/user/rpc/user"
@@ -24,8 +25,21 @@ func NewGetUserLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUserLo
 }
 
 func (l *GetUserLogic) GetUser(in *user.IdRequest) (*user.UserResponse, error) {
+	//从dic服务获取性别
+	genderId := int64(1)
+
+	dic, err := l.svcCtx.DicRpc.GetDicById(l.ctx, &dicclient.IdRequest{
+		Id: genderId,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &user.UserResponse{
-		Id:   "rpc处理的id"+ in.Id,
-		Name: "rpc 查询到的名称",
+		Id:   "user rpc处理的id"+ in.Id,
+		Name: "user rpc 查询到的名称",
+		Gender: dic.Val + " ->这个是从字典rpc表中查询到的数据",
+		Age: 12,
 	}, nil
 }
