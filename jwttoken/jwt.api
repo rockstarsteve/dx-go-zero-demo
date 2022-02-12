@@ -9,6 +9,7 @@ info(
 )
 
 type JwtTokenRequest {
+	UserId string `json:"userId"`
 }
 
 type JwtTokenResponse {
@@ -39,11 +40,12 @@ service jwt-api {
 
 @server(
 	jwt: JwtAuth
+	middleware: Example // 路由中间件声明
 )
 service jwt-api {
 	@handler GetUserHandler
 	post /user/info(GetUserRequest) returns (GetUserResponse)
 	
 	@handler Test2Handler
-	get /test/get2() returns (InfoResp)
+	get /test/get2(GetUserRequest) returns (InfoResp)
 }

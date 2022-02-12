@@ -9,3 +9,8 @@ UserRpc:
     Hosts:
       - 127.0.0.1:2379
     Key: user.rpc
+
+
+Log:
+  Mode: file
+  Path: logs/malllog

@@ -25,6 +25,11 @@ func NewTest2Logic(ctx context.Context, svcCtx *svc.ServiceContext) Test2Logic {
 
 func (l *Test2Logic) Test2() (resp *types.InfoResp, err error) {
 	// todo: add your logic here and delete this line
+	logx.Infof("userId: %v",l.ctx.Value("userId"))// 这里的key和生成jwt token时传入的key一致
+	key := l.ctx.Value("userId")
+	return &types.InfoResp{
+		Infotext: key.(string),
+	}, nil
 
 	return
 }

@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 	"github.com/golang-jwt/jwt/v4"
+	errorx "go-zero-demo/jwttoken/internal/common"
 	"time"
 
 	"go-zero-demo/jwttoken/internal/svc"
@@ -26,6 +27,11 @@ func NewJwtLogic(ctx context.Context, svcCtx *svc.ServiceContext) JwtLogic {
 }
 
 func (l *JwtLogic) Jwt(req types.JwtTokenRequest) (*types.JwtTokenResponse, error) {
+
+	if req.UserId != "007" {
+		return &types.JwtTokenResponse{}, errorx.NewCodeError(int(500),"用户名不存在")
+	}
+
 	var accessExpire = l.svcCtx.Config.JwtAuth.AccessExpire
 
 	now := time.Now().Unix()
@@ -41,17 +47,17 @@ func (l *JwtLogic) Jwt(req types.JwtTokenRequest) (*types.JwtTokenResponse, erro
 	}, nil
 }
 
-
 func (l *JwtLogic) GenToken(iat int64, secretKey string, payloads map[string]interface{}, seconds int64) (string, error) {
+
 	claims := make(jwt.MapClaims)
 	claims["exp"] = iat + seconds
 	claims["iat"] = iat
-	for k, v := range payloads {
-		claims[k] = v
-	}
+	claims["userId"] = "007"
+	//for k, v := range payloads {
+	//	claims[k] = v
+	//}
 
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = claims
-
 	return token.SignedString([]byte(secretKey))
 }

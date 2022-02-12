@@ -2,6 +2,7 @@
 package types
 
 type JwtTokenRequest struct {
+	UserId string `json:"userId"`
 }
 
 type JwtTokenResponse struct {

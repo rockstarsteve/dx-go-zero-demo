@@ -21,3 +21,10 @@ Table: user
 Cache:
   - Host: localhost:6379
 
+
+
+
+
+Log:
+  Mode: file
+  Path: logs/malllog
