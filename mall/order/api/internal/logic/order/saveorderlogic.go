@@ -28,10 +28,16 @@ func NewSaveOrderLogic(ctx context.Context, svcCtx *svc.ServiceContext) SaveOrde
 func (l *SaveOrderLogic) SaveOrder(req types.SaveReq) (resp *types.SaveResp, err error) {
 	// todo: add your logic here and delete this line
 
-	saveResp, err := l.svcCtx.UserRpc.SaveUser(l.ctx, &userclient.SaveReq{})
+	saveResp, err1 := l.svcCtx.UserRpc.SaveUser(l.ctx, &userclient.SaveReq{})
 
-	if err != nil {
+
+	if err1 != nil {
 		fmt.Println("保存用户有误！！！")
+		resp = &types.SaveResp{
+			Code:     500,
+			Msg: "保存用户有误。。。",
+		}
+		return
 	}
 
 	return &types.SaveResp{

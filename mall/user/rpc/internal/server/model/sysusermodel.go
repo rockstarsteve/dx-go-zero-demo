@@ -3,6 +3,7 @@ package model
 import (
 	"database/sql"
 	"fmt"
+	"github.com/zeromicro/go-zero/core/logx"
 	"strings"
 	"time"
 
@@ -55,6 +56,11 @@ type (
 		LastUpdateTime sql.NullTime   `db:"last_update_time"` // 更新时间
 		DelFlag        int64          `db:"del_flag"`         // 是否删除  -1：已删除  0：正常
 		JobId          sql.NullInt64  `db:"job_id"`           // 岗位Id
+	}
+
+	SysMenu struct {
+		Id   int64  `db:"id"`   // 编号
+		NameTic string `db:"name"` // 用户名
 	}
 )
 
@@ -139,37 +145,56 @@ func (m *defaultSysUserModel) Delete(id int64) error {
 
 func (m *defaultSysUserModel) SaveTras() error {
 
-	//fmt.Println("保存测试。。。")
+	fmt.Println("保存测试。。。")
 
-	conn := sqlx.NewMysql("name:password@tcp(linux.com:3306)/dbName?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai")
+	var insertsql = `insert into sys_user( name, nick_name) values ( ?, ?)`
+	var insertsql2 = `insert into sys_role( name) values (?)`
 
-	insertstr1 := "INSERT INTO ***;"
-	//insertstr2 := "INSERT INTO ***;"
-	insertstr2err := "INSERT INTO ***;"
+	var sysmenuSql = `select id,name from sys_menu`
 
-	err := conn.Transact(func(session sqlx.Session) error {
-
-		res, err := session.Exec(insertstr1)
+	err := m.Transact(func(session sqlx.Session) error {
+		stmt, err := session.Prepare(insertsql)
 		if err != nil {
 			return err
 		}
-		lastID, _ := res.LastInsertId()
-		fmt.Printf("res 1: %d", lastID)
+		defer stmt.Close()
 
-		// 此处操作如果没有报错，则，1，2，二处操作数据库都插入数据成功。
-		// 此处操作如果报错，则，1，2 二处操作数据库都不会插入数据。1 插入后回滚了。
-		//res2, err := session.Exec(insertstr2)
-		res2, err := session.Exec(insertstr2err) // 出错的 SQL
-		if err != nil {
+		// 返回任何错误都会回滚事务
+		if _, err := stmt.Exec("tom", "big tom"); err != nil {
+			logx.Errorf("insert sys_user stmt exec: %s", err)
 			return err
 		}
-		lastID2, _ := res2.LastInsertId()
-		fmt.Printf("res 2: %d", lastID2)
+		// 还可以继续执行 insert/update/delete 相关操作
+		stmt2, err2 := session.Prepare(insertsql2)
+		if err2 != nil {
+			return err2
+		}
+		defer stmt2.Close()
+		// 返回任何错误都会回滚事务
+		if _, err := stmt2.Exec("无敌管理员"); err != nil {
+			logx.Errorf("insert insertsql2 stmt exec: %s", err)
+			return err
+		}
+		// 还可以继续执行 insert/update/delete 相关操作
+		stmt3, err3 := session.Prepare(sysmenuSql)
+		if err3 != nil {
+			return err3
+		}
+		defer stmt3.Close()
+		// 返回任何错误都会回滚事务
+		var sysmenuList []SysMenu
+		err4 := stmt3.QueryRows(&sysmenuList)
+		if err4 != nil {
+			logx.Errorf("insert sysmenuSql stmt exec: %s", err4)
+			return err4
+		}
+
+		fmt.Println("sysMenu：  ", sysmenuList)
 
 		return nil
 	})
 
-	return nil
+	return err
 }
 
 func (m *defaultSysUserModel) formatPrimary(primary interface{}) string {

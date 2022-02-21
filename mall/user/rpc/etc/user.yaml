@@ -26,5 +26,5 @@ Cache:
 
 
 Log:
-  Mode: file
+  Mode: console
   Path: logs/malllog
