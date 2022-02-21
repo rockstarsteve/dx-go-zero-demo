@@ -14,10 +14,13 @@ import (
 
 type (
 	IdRequest    = user.IdRequest
+	SaveReq      = user.SaveReq
+	SaveResp     = user.SaveResp
 	UserResponse = user.UserResponse
 
 	User interface {
 		GetUser(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*UserResponse, error)
+		SaveUser(ctx context.Context, in *SaveReq, opts ...grpc.CallOption) (*SaveResp, error)
 	}
 
 	defaultUser struct {
@@ -34,4 +37,9 @@ func NewUser(cli zrpc.Client) User {
 func (m *defaultUser) GetUser(ctx context.Context, in *IdRequest, opts ...grpc.CallOption) (*UserResponse, error) {
 	client := user.NewUserClient(m.cli.Conn())
 	return client.GetUser(ctx, in, opts...)
+}
+
+func (m *defaultUser) SaveUser(ctx context.Context, in *SaveReq, opts ...grpc.CallOption) (*SaveResp, error) {
+	client := user.NewUserClient(m.cli.Conn())
+	return client.SaveUser(ctx, in, opts...)
 }

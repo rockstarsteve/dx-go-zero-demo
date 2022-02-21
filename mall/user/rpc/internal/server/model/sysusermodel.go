@@ -30,6 +30,7 @@ type (
 		FindOneByName(name string) (*SysUser, error)
 		Update(data *SysUser) error
 		Delete(id int64) error
+		SaveTras() error
 	}
 
 	defaultSysUserModel struct {
@@ -134,6 +135,41 @@ func (m *defaultSysUserModel) Delete(id int64) error {
 		return conn.Exec(query, id)
 	}, sysUserIdKey, sysUserNameKey)
 	return err
+}
+
+func (m *defaultSysUserModel) SaveTras() error {
+
+	//fmt.Println("保存测试。。。")
+
+	conn := sqlx.NewMysql("name:password@tcp(linux.com:3306)/dbName?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai")
+
+	insertstr1 := "INSERT INTO ***;"
+	//insertstr2 := "INSERT INTO ***;"
+	insertstr2err := "INSERT INTO ***;"
+
+	err := conn.Transact(func(session sqlx.Session) error {
+
+		res, err := session.Exec(insertstr1)
+		if err != nil {
+			return err
+		}
+		lastID, _ := res.LastInsertId()
+		fmt.Printf("res 1: %d", lastID)
+
+		// 此处操作如果没有报错，则，1，2，二处操作数据库都插入数据成功。
+		// 此处操作如果报错，则，1，2 二处操作数据库都不会插入数据。1 插入后回滚了。
+		//res2, err := session.Exec(insertstr2)
+		res2, err := session.Exec(insertstr2err) // 出错的 SQL
+		if err != nil {
+			return err
+		}
+		lastID2, _ := res2.LastInsertId()
+		fmt.Printf("res 2: %d", lastID2)
+
+		return nil
+	})
+
+	return nil
 }
 
 func (m *defaultSysUserModel) formatPrimary(primary interface{}) string {

@@ -11,3 +11,11 @@ type OrderReply struct {
 	Age    int64  `json:"age"`
 	Gender string `json:"gender"`
 }
+
+type SaveReq struct {
+}
+
+type SaveResp struct {
+	Code int64  `json:"code"`
+	Msg  string `json:"msg"`
+}

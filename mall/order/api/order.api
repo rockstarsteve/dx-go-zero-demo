@@ -9,6 +9,13 @@ type (
 		Age    int64  `json:"age"`
 		Gender string `json:"gender"`
 	}
+
+	saveReq {
+	}
+	saveResp {
+		Code int64  `json:"code"`
+		Msg  string `json:"msg"`
+	}
 )
 
 @server(
@@ -18,4 +25,7 @@ type (
 service order {
 	@handler getOrder
 	get /api/order/get/:id (OrderReq) returns (OrderReply)
+	
+	@handler saveOrder
+	get /api/order/save (saveReq) returns (saveResp)
 }

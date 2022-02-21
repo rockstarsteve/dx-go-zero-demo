@@ -17,6 +17,18 @@ message UserResponse {
   int64 age = 5;
 }
 
+message saveReq {
+}
+
+message saveResp {
+  // 成功标志
+  int64 code = 1;
+  // 消息
+  string msg = 2;
+}
+
 service User {
   rpc getUser(IdRequest) returns(UserResponse);
+
+  rpc saveUser(saveReq) returns(saveResp);
 }
